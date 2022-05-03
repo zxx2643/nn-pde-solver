@@ -2,20 +2,23 @@ This repo contains only part of the mechanoChemML library. It is simplified for 
 
 # Installation
 
-1. donwload the repo
+    $ git clone git@github.com:zxx2643/nn-pde-solver.git
 
-2. use conda to create a virtual env
+    $ (base) conda create --name pde python==3.7
 
-3. pip3 install -r requirements.txt
+    $ (base) conda activate pde
 
-4. python3 install_tensorflow.py
+    $ (pde) cd nn-pde-solver
+
+    $ (pde) pip3 install -r requirements.txt
+
+    $ (pde) python3 install_tensorflow.py
 
 # Examples
 
-go to the example folder and run
+    $ (pde) cd src/Example1_diffusion_steady_state
 
-python main.py innput.ini
-
+    $ (pde) python main.py octagon-32x32-cnn.ini
 
 
 #########################################################################################################################
