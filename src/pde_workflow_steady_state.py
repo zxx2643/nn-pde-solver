@@ -188,83 +188,6 @@ class PDEWorkflowSteadyState:
         logger.setLevel(logging.DEBUG)
         self.logger = logger
 
-    def _output_bc_stats(self):
-
-        self.bc_data_seq = BatchData(data=(self.features, self.labels), batch_size=20)
-        bc_data_stats = tf.zeros_like(self.features[0:1,:,:,:]).numpy()
-        bc_val_min = None
-        bc_val_max = None
-        for step, (batch_x, batch_y) in enumerate(self.bc_data_seq):
-            bc_counts = tf.where(batch_x > 0, tf.ones_like(batch_x, dtype=tf.float32), tf.zeros_like(batch_y, dtype=tf.float32))
-            bc_counts = tf.reduce_sum(bc_counts, [0], keepdims=True).numpy()
-            bc_data_stats = bc_data_stats + bc_counts
-            bc_values = batch_x
-            bc_values = np.ma.masked_where(bc_values <= 0, bc_values)
-            bc_min = np.amin(bc_values, axis=(1,2))
-            bc_max = np.amax(bc_values, axis=(1,2))
-            if bc_val_min is None:
-                bc_val_min = bc_min
-                bc_val_max = bc_max
-            else:
-                bc_val_min = np.concatenate((bc_val_min, bc_min), axis=0)
-                bc_val_max = np.concatenate((bc_val_max, bc_max), axis=0)
-            print(step, np.shape(bc_data_stats), 'bc_min=', np.shape(bc_val_min), 'bc_max=', np.shape(bc_val_max))
-
-        bc_data_info = {
-                'count':bc_data_stats,
-                'min': bc_val_min,
-                'max': bc_val_max,
-                }
-        pickle_out = open('bc_data_' + str(np.shape(bc_val_min)[0]) + '.pickle', "wb")
-        pickle.dump(bc_data_info, pickle_out)
-        pickle_out.close()
-
-        exit(0)
-
-    def _output_bc_stats_good_bad(self):
-
-        self.bc_data_seq = BatchData(data=(self.features, self.labels), batch_size=1)
-        bc_data_stats = tf.zeros_like(self.features[0:1,:,:,:]).numpy()
-        bc_val_min = None
-        bc_val_max = None
-        for step, (batch_x, batch_y) in enumerate(self.bc_data_seq):
-
-# top 20 Neumann:  [248, 95, 187, 273, 19, 242, 101, 89, 166, 93, 110, 6, 310, 82, 302, 224, 260, 190, 207, 209]
-# bad 20 Neumann:  [138, 38, 61, 55, 186, 119, 47, 26, 281, 90, 249, 42, 54, 279, 56, 276, 319, 30, 259, 257]
-# top 20 no Neumann:  [105, 244, 191, 261, 35, 8, 99, 115, 136, 255, 18, 22, 243, 171, 32, 12, 0, 270, 23, 193]
-# bad 20 no Neumann:  [152, 295, 307, 206, 308, 60, 298, 204, 218, 256, 219, 141, 240, 226, 174, 250, 289, 262, 285, 316]
-
-            # if step in [248, 95, 187, 273, 19, 242, 101, 89, 166, 93, 110, 6, 310, 82, 302, 224, 260, 190, 207, 209]:
-            # if step in [138, 38, 61, 55, 186, 119, 47, 26, 281, 90, 249, 42, 54, 279, 56, 276, 319, 30, 259, 257]:
-            # if step in [105, 244, 191, 261, 35, 8, 99, 115, 136, 255, 18, 22, 243, 171, 32, 12, 0, 270, 23, 193]:
-            if step in [152, 295, 307, 206, 308, 60, 298, 204, 218, 256, 219, 141, 240, 226, 174, 250, 289, 262, 285, 316]:
-                bc_counts = tf.where(batch_x > 0, tf.ones_like(batch_x, dtype=tf.float32), tf.zeros_like(batch_y, dtype=tf.float32))
-                bc_counts = tf.reduce_sum(bc_counts, [0], keepdims=True).numpy()
-                bc_data_stats = bc_data_stats + bc_counts
-                bc_values = batch_x
-                bc_values = np.ma.masked_where(bc_values <= 0, bc_values)
-                bc_min = np.amin(bc_values, axis=(1,2))
-                bc_max = np.amax(bc_values, axis=(1,2))
-                if bc_val_min is None:
-                    bc_val_min = bc_min
-                    bc_val_max = bc_max
-                else:
-                    bc_val_min = np.concatenate((bc_val_min, bc_min), axis=0)
-                    bc_val_max = np.concatenate((bc_val_max, bc_max), axis=0)
-                print(step, np.shape(bc_data_stats), 'bc_min=', np.shape(bc_val_min), 'bc_max=', np.shape(bc_val_max))
-
-        bc_data_info = {
-                'count':bc_data_stats,
-                'min': bc_val_min,
-                'max': bc_val_max,
-                }
-        pickle_out = open('bc_data_' + str(np.shape(bc_val_min)[0]) + '.pickle', "wb")
-        pickle.dump(bc_data_info, pickle_out)
-        pickle_out.close()
-
-        exit(0)
-
-
 
     def _load_data(self, only_neumann_data=False, test_folder=''):
         """ 
@@ -275,18 +198,6 @@ class PDEWorkflowSteadyState:
             test_folder (str): the default location of data is in 'DNS'. If test_folder is specified, the data in this folder will be loaded for testing purpose.
         """
 
-        # waiting for gpu resources without killing the program
-        # while (True):
-            # try:
-                # tf.math.ceil(0.1)
-                # cmd = "echo 'gpu resource is allowed' > " + self.filename+'-gpu.log'
-                # exe_cmd(cmd)
-                # break
-            # except:
-                # cmd = "echo 'gpu resource is not available, waiting...' > " + self.filename+'-gpu.log'
-                # exe_cmd(cmd)
-                # time.sleep(1)
-                # pass
 
         self.features = None
         self.labels = None
@@ -327,47 +238,10 @@ class PDEWorkflowSteadyState:
 
             if (not only_testing) and only_neumann_data:
                 raise ValueError("only neumann data option is disabled")
-                # selected_index = []
-                # for i0 in range(0, np.shape(self.features)[0]):
-                    # # print('i0=', i0, np.any(np.greater(self.features[i0,:,:,2:4], 0)))
-                    # # the following should still be compatible with the extra Neumann channel
-                    # if np.any(np.greater(self.features[i0,:,:,self.dof:2*self.dof], 0)): # with Neumann BCs 
-                        # selected_index.append(i0)
-                # selected_index = np.array(selected_index)
-                # # print(np.shape(selected_index))
-                # # print(np.shape(self.features[selected_index]))
-                # self.features = self.features[selected_index]
-                # self.labels = self.labels[selected_index]
+
         print('len of self.features: ', np.shape(self.features))
         self.dh = 1.0 / (np.shape(self.features)[2] - 1.0)
 
-        # the_feature = pde_layers.LayerFillZeros()(self.features)
-        # the_feature = pde_layers.LayerFillRandomNumber()(self.features)
-        # for i in range(0, 1000, 50):
-            # plot_fields(
-                    # list_of_field = [
-                        # the_feature[i:i+1, :, :, 0:1], 
-                        # the_feature[i:i+1, :, :, 1:2], 
-                        # the_feature[i:i+1, :, :, 2:3], 
-                        # ],
-                    # list_of_field_name = [
-                        # 'Dirichlet', 
-                        # 'Neumann x', 
-                        # 'Neumann y', 
-                        # ], 
-                    # dof = 1, 
-                    # dof_name = ['c'],
-                    # filename = 'results/' + self.problem_name + '-' + str(i) + '-Sol.png')
-
-        # R_red, y_pred, y_true_dummy, _, _, _ = self._compute_residual(the_feature, self.labels)
-        # print(np.shape(R_red), np.shape(y_pred))
-        # for i in range(0, 1000, 50):
-            # print(i, R_red[i,20:30,20:30,0])
-            # # print(i, self.labels[i,20:30,20:30,0])
-
-        # BC perturbation
-        # the_feature = pde_layers.LayerFillRandomToBCs(stddev=0.05)(the_feature)
-        # the_feature = the_feature.numpy()
 
         # self._output_bc_stats()
         # self._output_bc_stats_good_bad()
@@ -634,40 +508,7 @@ class PDEWorkflowSteadyState:
             print('saved bias: ', saved_bias, 'bias_ind: ', bias_ind)
             raise ValueError("WARNING: loaded cnn saved bias numbers != bnn bias numbers, might load wrong model")
 
-        # #gets a reference to the list containing the trainable variables
-        # print('trainable variable: ', len(self.model.trainable_variables))
-        # # -----following not working-----
-        # trainable_collection = tf.compat.v1.get_collection_ref(tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES)
-        # print(trainable_collection)
-        # variables_to_remove = list()
-        # for vari in trainable_collection:
-            # #uses the attribute 'name' of the variable
-            # if vari.name=="batch_normalization/gamma:0" or vari.name=="batch_normalization/beta:0":
-                # variables_to_remove.append(vari)
-        # for rem in variables_to_remove:
-            # trainable_collection.remove(rem)
-        # -----following not working-----
-        
-        # #It is very difficult to make mean to untrainable, and we should not do so.
-        # print('type of trainable_variables: ', type(self.model.trainable_variables))
-        # to_untrainable = [x for x in to_untrainable[::-1]]
-        # print('to_untrainable: ', to_untrainable)
-        # for v0 in to_untrainable:
-            # del self.model.trainable_variables[v0]
 
-            # # print('new v0: ', v0)
-        # # print('all trainable weights:',self.model.trainable_weights )
-        # exit(0)
-        # print('get layers: ', self.model.get_layer(index=1))
-        # print('layers kernel: ', self.model.get_layer(index=1).trainable_weights)
-        # # print('layers bias: ', self.model.get_layer(index=1).bias)
-        # print('layer trainable_variables: ', self.model.get_layer(index=1).trainable_variables)
-        # print('all trainable variable:',self.model.trainable_variables )
-        # print('all trainable weights:',self.model.trainable_weights )
-        # print("Successfully load weight: ", latest)
-        # print('layers: ', self.model.layers)
-        # print('get layers: ', self.model.get_layer(index=0))
-        # self.model.summary()
         return 1
 
     def _build_model(self):
@@ -926,151 +767,6 @@ class PDEWorkflowSteadyState:
                 plt.savefig(self.filename+'-sigma2.png')
                 print('save to:', self.filename+'-sigma2.png')
 
-    def debug_problem(self, use_label=False):
-        """ for debugging purpose """
-        self._load_data()
-
-        # show the plots how many times:
-        features = self.features
-        labels = self.labels
-
-        # features = tf.convert_to_tensor(features, dtype=tf.float32)
-        # labels = tf.convert_to_tensor(labels, dtype=tf.float32)
-        # print( pde_layers.LayerFillRandomToBCs(stddev=0.005)(features) )
-
-        try: 
-            prediction = self.model.predict(self.features)
-            # features = y_pred[:,:,:,self.dof:3*self.dof]
-            y_pred = prediction[:,:,:,0:self.dof] 
-        except:
-            prediction = pde_layers.LayerFillRandomNumber()(features)
-            y_pred = prediction[:,:,:,0:self.dof] 
-
-        bc_mask_dirichlet = pde_layers.ComputeBoundaryMaskNodalData(features, dof=self.dof, opt=1)
-        bc_mask_neumann = pde_layers.ComputeBoundaryMaskNodalData(features, dof=self.dof, opt=2)
-        if self.UseTwoNeumannChannel :
-            neumann_residual = pde_layers.ComputeNeumannBoundaryResidualNodalDataNew(features, dh=self.dh, dof=self.dof)
-        else:
-            neumann_residual = pde_layers.ComputeNeumannBoundaryResidualNodalData(features, dh=self.dh, dof=self.dof)
-
-        if use_label:
-            y_pred = labels
-
-        print('features',tf.shape(features))
-        print('labels',tf.shape(labels))
-        print('bc_mask_dirichlet:', tf.shape(bc_mask_dirichlet))
-
-        print('bc_mask_neumann:', tf.shape(bc_mask_neumann))
-
-        reverse_bc_mask_dirichlet = tf.where( bc_mask_dirichlet == 0, tf.fill(tf.shape(bc_mask_dirichlet), 1.0), tf.fill(tf.shape(bc_mask_dirichlet), 0.0))
-        print('reverse_bc_mask_dirichlet :', tf.shape(reverse_bc_mask_dirichlet ))
-
-        reverse_bc_mask_neumann = tf.where( bc_mask_neumann == 0, tf.fill(tf.shape(bc_mask_neumann), 1.0), tf.fill(tf.shape(bc_mask_neumann), 0.0))
-        print('reverse_bc_mask_neumann :', tf.shape(reverse_bc_mask_neumann ))
-
-        mask_labels = tf.multiply(labels, reverse_bc_mask_dirichlet) 
-        print('mask_labels :', tf.shape(mask_labels ))
-        print('neumann_residual :', tf.shape(neumann_residual ), tf.reduce_sum(tf.square( neumann_residual )))
-        
-        print('y_pred',tf.shape(y_pred))
-
-        input_dirichlet = labels
-        dirichlet_bc = tf.multiply(input_dirichlet, reverse_bc_mask_dirichlet)
-        y_pred = tf.multiply(y_pred, bc_mask_dirichlet)
-        y_pred = y_pred + dirichlet_bc
-        print('dirichlet_bc', tf.shape(dirichlet_bc))
-
-        elem_bulk_residual=self._bulk_residual(y_pred)
-
-        print('elem_bulk_residual',tf.shape(elem_bulk_residual))
-        elem_residual_mask = pde_layers.GetElementResidualMask(labels)
-        print('elem_residual_mask',tf.shape(elem_residual_mask))
-        R = pde_layers.GetNodalInfoFromElementInfo(elem_bulk_residual, elem_residual_mask, dof=self.dof)
-        R_fix = tf.where(dirichlet_bc==0.5, R, 0.0)
-        F_mean = tf.reduce_sum(R_fix, axis=[1,2])
-        print('F_mean', F_mean)
-        print('R',tf.shape(R))
-        R_norm = tf.norm( R, axis=[1,2])
-        R_reduce_mean = tf.reduce_mean(tf.square( R ))
-        R_reduce_sum = tf.reduce_sum(tf.square( R ))
-        R_reduce_mean_norm = tf.reduce_mean(R_norm)
-        # c = tf.constant([[1.0, 2.0], [3.0, 4.0]])
-        # R_norm = tf.norm( c, axis=1, keepdims=True)
-        # print(R_norm)
-        # print(R_reduce_mean)
-        # print(R_reduce_mean_norm)
-        # print(R_reduce_sum)
-        # R_new = R - neumann_residual
-
-        R_neumann = tf.multiply(R, reverse_bc_mask_neumann)
-        print('R_neumann :', tf.shape(R_neumann ))
-        delta_R_neumann = R_neumann - neumann_residual
-        print('delta_R_neumann :', tf.shape(delta_R_neumann ))
-
-        R = R - neumann_residual
-
-        dist = tfp.distributions.Normal(loc=tf.zeros_like(R), scale=0.00001)
-        print( tf.keras.backend.sum(-dist.log_prob(R)) )
-
-        R_bc_mask_dirichlet = tf.multiply(R, bc_mask_dirichlet) 
-        print('R_bc_mask_dirichlet:', tf.shape(R_bc_mask_dirichlet))
-        R_bc_mask_dirichlet_neumann = tf.multiply(R_bc_mask_dirichlet, bc_mask_neumann) 
-        print('R_bc_mask_dirichlet_neumann:', tf.shape(R_bc_mask_dirichlet_neumann))
-
-        print(tf.reduce_mean(tf.square( R_bc_mask_dirichlet )))
-        print(tf.reduce_mean(tf.reduce_sum(tf.square(R_bc_mask_dirichlet_neumann), axis=[1,2,3]))) 
-        print(tf.reduce_mean(tf.reduce_sum(tf.square(delta_R_neumann), axis=[1,2,3])))
-
-        plot_fields(
-                list_of_field = [
-                    features[0:1, :, :, 0:self.dof], 
-                    features[0:1, :, :, self.dof:2*self.dof], 
-                    labels[0:1, :, :, 0:self.dof],  
-                    y_pred[0:1, :, :, 0:self.dof]],
-                list_of_field_name = [
-                    'Dirichlet', 
-                    'Neumann', 
-                    'Label', 
-                    'Pred. Sol.'], 
-                dof = self.dof, 
-                dof_name = self.dof_name,
-                filename = 'results/' + self.problem_name + '-Sol.png')
-
-        plot_fields(
-                list_of_field = [
-                    bc_mask_dirichlet[0:1, :, :, 0:self.dof], 
-                    reverse_bc_mask_dirichlet[0:1, :, :, 0:self.dof], 
-                    mask_labels[0:1, :, :, 0:self.dof], 
-                    bc_mask_neumann[0:1, :, :, 0:self.dof],  
-                    reverse_bc_mask_neumann[0:1, :, :, 0:self.dof]],
-                list_of_field_name = [
-                    'BC_Mask_Dirichlet', 
-                    'Rev. BC_Mask_Dir.', 
-                    'Rev. BC_Mask_Dir. * Labels', 
-                    'BC_Mask_Neumann', 
-                    'Rev. BC_Mask_Neu'], 
-                dof = self.dof, 
-                dof_name = self.dof_name,
-                filename = 'results/' + self.problem_name + '-BCs.png')
-
-        plot_fields(
-                list_of_field = [
-                    R[0:1, :, :, 0:self.dof], 
-                    tf.tile(elem_residual_mask[0:1, :, :, 0:1], [1,1,1,self.dof]), 
-                    neumann_residual[0:1, :, :, 0:self.dof], 
-                    delta_R_neumann[0:1, :, :, 0:self.dof],  
-                    R_bc_mask_dirichlet_neumann[0:1, :, :, 0:self.dof]],
-                list_of_field_name = [
-                    'Nodal R', 
-                    'Elem Residual Mask', 
-                    'Neumann R', 
-                    'dR Neumann', 
-                    'R * BC_M_Dir. * BC_M_Neu.'], 
-                dof = self.dof, 
-                dof_name = self.dof_name,
-                filename = 'results/' + self.problem_name + '-R.png')
-
-
     def test(self, test_folder='', plot_png=True, output_reaction_force=False):
         """
         Make prediction with the surrogate model
@@ -1237,67 +933,6 @@ class PDEWorkflowSteadyState:
                 pickle.dump(self.simulation_results, pickle_out)
                 pickle_out.close()
                 print('save to: ', self.filename + '.pickle')
-
-
-    def test_residual_gaussian(self, noise_std=1.e-3, sample_num=10000):
-        """
-        Test the residual noise distribution based on a Gaussian perturbation to inputs.
-
-        Args:
-            noise_std (float): default (1.0e-3)
-            sample_num (int): default (10000)
-
-        Note:
-        It is preferred to use the DNS label data to make the test as the actually residual (mean) from such data is very small. 
-        By default, it will load data from DataPath/DNS. Only the first data point will be used.
-        """
-
-        self._load_data()
-
-        x_dim = tf.shape(self.labels).numpy()[1]
-        y_dim = tf.shape(self.labels).numpy()[2]
-
-        filename = 'results/' + self.problem_name + '-num-' + str(sample_num) + '-std-' + "{:.1e}".format(noise_std)
-
-        dummy_batch = 500 # if too big, we get gpu memory issue
-        dpi = 150
-
-        if tf.shape(self.labels)[0] != 1:
-            self.labels = self.labels[0:1,:,:,:]
-            self.features = self.features[0:1,:,:,:]
-            # raise ValueError("the residual Gaussian test only work for self.labels with first dim = 1, tf.shape(self.labels)=", tf.shape(self.labels))
-
-        self.features = tf.convert_to_tensor(self.features, dtype=tf.float32)
-        self.labels = tf.convert_to_tensor(self.labels, dtype=tf.float32)
-        dist = tfp.distributions.Normal(loc=tf.zeros_like(self.labels), scale=noise_std)
-
-        features = tf.tile(self.features, [sample_num,1,1,1])
-        labels   = tf.tile(self.labels,   [sample_num,1,1,1])
-        y_pred = labels
-        # print(tf.shape(y_pred))
-        y_noise = tf.squeeze(dist.sample(sample_num), [1]) # after sampling, the 2nd dim is 1.
-        y_pred = y_pred + y_noise
-        y_pred = tf.concat([self.labels, y_pred[1:,:,:,:]], axis=0) # replace 0 with data point without perturbation
-        # print(tf.shape(y_pred))
-
-        dummy_seq = np.array_split(np.arange(sample_num), int(sample_num/dummy_batch)+1)
-        # print(dummy_seq)
-        R_all = []
-        R_list = []
-        for s0 in dummy_seq:
-            start = s0[0]
-            end = s0[-1] + 1 # because start:end will not count the end, +1 will make sure end index will be counted
-            R, _, _, _, _, _ = self._compute_residual(features[start:end,:,:,:], y_pred[start:end,:,:,:])
-            # print(tf.shape(R))
-            R_list.append(R)
-        R = np.vstack(R_list)
-        # print(tf.shape(R))
-
-        for i0 in range(0, self.dof):
-            plot_one_field(data=R[:,:,:,i0], x_dim=2, y_dim=2, dpi=dpi, name=filename + '-' + self.dof_name[i0] + '-R.png')
-            plot_one_field_stat(data=R[:,:,:,i0], dpi=dpi, name=filename + '-' + self.dof_name[i0] + '-R-stat.png')
-            plot_one_field_hist(data=R[:,:,:,i0], x_dim=x_dim, y_dim=y_dim, dpi=dpi, name=filename + '-' + self.dof_name[i0] + '-R-hist.png')
-            plot_one_field_hist(data=y_pred[:,:,:,i0], x_dim=x_dim, y_dim=y_dim, dpi=dpi, name=filename + '-' + self.dof_name[i0] + '-solution-hist.png')
 
 
     def run(self):
