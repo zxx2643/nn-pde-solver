@@ -2,7 +2,7 @@ This repo contains only part of the mechanoChemML library. It is simplified for 
 
 # Installation
 
-    $ git clone git@github.com:zxx2643/nn-pde-solver.git
+    $ (base) git clone git@github.com:zxx2643/nn-pde-solver.git
 
     $ (base) conda create --name pde python==3.7
 
