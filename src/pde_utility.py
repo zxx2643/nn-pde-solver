@@ -461,7 +461,7 @@ def split_data(datax, datay, batch_size, split_ratio=['0.8', '0.1', '0.1']):
     tt_datax = np.array(datax[end_cv:end_tt])
     tt_datay = np.array(datay[end_cv:end_tt])
 
-    return tr_datax, tr_datay, cv_datax, cv_datay, tt_datax, tt_datay
+    return tr_datax, tr_datay, cv_datax, cv_datay, tt_datax, tt_datay, int(end_tr/batch_size)
 
 def split_data_heter(datax, datay, dataz, batch_size, split_ratio=['0.8', '0.1', '0.1']):
     """ split data according to a specific ratio """
@@ -610,30 +610,42 @@ class BatchData(tf.keras.utils.Sequence):
         return batch_x, batch_y
 
 
-class BatchDataTime(tf.keras.utils.Sequence):
-    """Produces a sequence of the data with labels."""
-    """Borrowed from: class MNISTSequence(tf.keras.utils.Sequence) """
+# class BatchDataTime(tf.keras.utils.Sequence):
+    # """Produces a sequence of the data with labels."""
+    # """Borrowed from: class MNISTSequence(tf.keras.utils.Sequence) """
 
-    def __init__(self, data, batch_size=128):
-        """Initializes the sequence.
+    # def __init__(self, data, batch_size=128):
+        # """Initializes the sequence.
 
-    Args:
-      data: Tuple of numpy `array` instances, the first representing images and
-            the second labels.
-      batch_size: Integer, number of elements in each training batch.
-    """
-        self.features, self.time, self.labels,  = data
-        self.batch_size = batch_size
+    # Args:
+      # data: Tuple of numpy `array` instances, the first representing images and
+            # the second labels.
+      # batch_size: Integer, number of elements in each training batch.
+    # """
+        # self.features, self.time, self.labels,  = data
+        # self.batch_size = batch_size
 
-    def __len__(self):
-        # return int(tf.math.ceil(len(self.features) / self.batch_size))  # contains batches less than the size of batch_size
-        return int(len(self.features) / self.batch_size) # all batches are equal-sized.
+    # def __len__(self):
+        # # return int(tf.math.ceil(len(self.features) / self.batch_size))  # contains batches less than the size of batch_size
+        # return int(len(self.features) / self.batch_size) # all batches are equal-sized.
 
-    def __getitem__(self, idx):
-        batch_x    = self.features[idx * self.batch_size:(idx + 1) * self.batch_size]
-        batch_x_time = self.time[idx * self.batch_size:(idx + 1) * self.batch_size]
-        batch_y    = self.labels[idx * self.batch_size:(idx + 1) * self.batch_size]
-        return batch_x, batch_x_time, batch_y
+    # def __getitem__(self, idx):
+        # batch_x    = self.features[idx * self.batch_size:(idx + 1) * self.batch_size]
+        # batch_x_time = self.time[idx * self.batch_size:(idx + 1) * self.batch_size]
+        # batch_y    = self.labels[idx * self.batch_size:(idx + 1) * self.batch_size]
+        # return batch_x, batch_x_time, batch_y
+
+
+def BatchData(data, batch_size):
+    features, labels = data
+    dataset = tf.data.Dataset.from_tensor_slices((tf.convert_to_tensor(features, dtype=tf.float32), tf.convert_to_tensor(labels, dtype=tf.float32)))
+    batched_dataset = dataset.batch(batch_size)
+    return batched_dataset
+    # print(dataset2, batched_dataset2)
+    # for b0 in batched_dataset2.prefetch(1):
+        # print(b0)
+
+
 
 
 def exe_cmd(cmd, output=False):

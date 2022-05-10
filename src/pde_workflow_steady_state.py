@@ -260,7 +260,7 @@ class PDEWorkflowSteadyState:
             self.train_seq = self.test_seq
         else:
             the_feature, the_label = expand_dataset(self.features, self.labels, times=self.expand_times)
-            self.train_dataset, self.train_label, self.val_dataset, self.val_label, self.test_dataset, self.test_label = split_data(the_feature, the_label, self.batch_size, split_ratio=['0.8', '0.1', '0.1'])
+            self.train_dataset, self.train_label, self.val_dataset, self.val_label, self.test_dataset, self.test_label, self.total_train_batch = split_data(the_feature, the_label, self.batch_size, split_ratio=['0.8', '0.1', '0.1'])
             # self.train_dataset, self.train_label, self.val_dataset, self.val_label, self.test_dataset, self.test_label = split_data(the_feature, the_label, split_ratio=['0.1', '0.1', '0.8'])
             self.train_seq = BatchData(data=(self.train_dataset, self.train_label), batch_size=self.batch_size)
             self.val_seq   = BatchData(data=(self.val_dataset,   self.val_label),   batch_size=self.batch_size)
@@ -269,9 +269,9 @@ class PDEWorkflowSteadyState:
                   'len of training data: ', np.shape(self.train_dataset), 
                   'len of test data: ', np.shape(self.test_dataset), 
                   'batch size: ', self.batch_size, 
-                  'total train batches: ', len(self.train_seq),
-                  'total val batches: ', len(self.val_seq),
-                  'total test batches: ', len(self.test_seq),
+                  # 'total train batches: ', len(self.train_seq),
+                  # 'total val batches: ', len(self.val_seq),
+                  # 'total test batches: ', len(self.test_seq),
                   )
 
     def _bulk_residual(self):
@@ -535,7 +535,7 @@ class PDEWorkflowSteadyState:
 
         self.model = BNN_user_weak_pde_general(
                 layers_str=self.config['NN']['NNArchitecture'],
-                NUM_TRAIN_EXAMPLES=len(self.train_seq), # total batch numbers
+                NUM_TRAIN_EXAMPLES=self.total_train_batch, # total batch numbers
                 Sigma2=self.Sigma2)
         self.optimizer = self._build_optimizer()
 
@@ -601,30 +601,30 @@ class PDEWorkflowSteadyState:
             if (self._load_saved_cnn_model()):
                 self.InitialEpoch = 0
 
-        if self.FixLoc == 1:
-            customized_trainer = True
-        else:
-            customized_trainer = False
-        print("use customized_trainer:", customized_trainer)
-        if customized_trainer:
-            tvars = self.model.trainable_variables
-            none_loc_vars = [var for var in tvars if '_loc' not in var.name]
-            none_scale_vars = [var for var in tvars if '_scale' not in var.name]
-            print(len(tvars), len(none_loc_vars), len(none_scale_vars))
+        # if self.FixLoc == 1:
+            # customized_trainer = True
+        # else:
+            # customized_trainer = False
+        # print("use customized_trainer:", customized_trainer)
+        # if customized_trainer:
+            # tvars = self.model.trainable_variables
+            # none_loc_vars = [var for var in tvars if '_loc' not in var.name]
+            # none_scale_vars = [var for var in tvars if '_scale' not in var.name]
+            # print(len(tvars), len(none_loc_vars), len(none_scale_vars))
 
-        def my_loss(y_true, y_pred):
+        # def my_loss(y_true, y_pred):
 
-            if self.UseTwoNeumannChannel :
-                inputs = y_pred[:,:,:,self.dof:4*self.dof] # new Neumann Channel
-            else:
-                inputs = y_pred[:,:,:,self.dof:3*self.dof] # old Neumann Channel
-            y_pred = y_pred[:,:,:,0:self.dof]
-            dist = tfp.distributions.Normal(loc=tf.zeros_like(y_pred), scale=self.Sigma1)
-            y_noise = tf.squeeze(dist.sample(1), [0]) # only sample 1, thus, lead dimension can be squeezed. 
-            y_pred = y_pred + y_noise
-            R_red, y_pred, y_true_dummy, _, _, _ = self._compute_residual(inputs, y_pred)
-            dist = tfp.distributions.Normal(loc=tf.zeros_like(y_true_dummy), scale=self.model.Sigma2)
-            return self.BetaMSELoss * tf.reduce_mean(tf.square(tf.where(y_true_dummy > -0.9, tf.random.normal(tf.shape(y_true_dummy), 0.5, 0.05, tf.float32, seed=1), tf.zeros_like(y_true_dummy)) - tf.where(y_true_dummy > -0.9, y_pred, tf.zeros_like(y_pred)))) + self.BetaPDELoss * tf.keras.backend.sum(tf.reduce_mean(-dist.log_prob(R_red), 0))
+            # if self.UseTwoNeumannChannel :
+                # inputs = y_pred[:,:,:,self.dof:4*self.dof] # new Neumann Channel
+            # else:
+                # inputs = y_pred[:,:,:,self.dof:3*self.dof] # old Neumann Channel
+            # y_pred = y_pred[:,:,:,0:self.dof]
+            # dist = tfp.distributions.Normal(loc=tf.zeros_like(y_pred), scale=self.Sigma1)
+            # y_noise = tf.squeeze(dist.sample(1), [0]) # only sample 1, thus, lead dimension can be squeezed. 
+            # y_pred = y_pred + y_noise
+            # R_red, y_pred, y_true_dummy, _, _, _ = self._compute_residual(inputs, y_pred)
+            # dist = tfp.distributions.Normal(loc=tf.zeros_like(y_true_dummy), scale=self.model.Sigma2)
+            # return self.BetaMSELoss * tf.reduce_mean(tf.square(tf.where(y_true_dummy > -0.9, tf.random.normal(tf.shape(y_true_dummy), 0.5, 0.05, tf.float32, seed=1), tf.zeros_like(y_true_dummy)) - tf.where(y_true_dummy > -0.9, y_pred, tf.zeros_like(y_pred)))) + self.BetaPDELoss * tf.keras.backend.sum(tf.reduce_mean(-dist.log_prob(R_red), 0))
 
         time_elapsed_list = []
         for epoch in range(self.epochs):
@@ -641,60 +641,61 @@ class PDEWorkflowSteadyState:
             # if (epoch+1)%50 == 0:
             # print('epoch:', epoch)
             epoch_loss = []
-            for step, (batch_x, batch_y) in enumerate(self.train_seq):
+            # for step, (batch_x, batch_y) in enumerate(self.train_seq):
+            for (batch_x, batch_y)  in self.train_seq.prefetch(self.batch_size*2):
                 batch_loss = self.model.train_on_batch(batch_x, batch_y)
                 epoch_loss.append(batch_loss)
                 # print("...training...", batch_loss)
 
 
-            epoch_val_loss = []
-            epoch_mse_loss = []
-            epoch_res_body = []
-            epoch_res_neu = []
-            if self.val_seq is not None:
-                for step, (batch_x, batch_y) in enumerate(self.val_seq):
-                    val_loss = self.model.test_on_batch(batch_x, batch_y)
-                    epoch_val_loss.append(val_loss)
+            # epoch_val_loss = []
+            # epoch_mse_loss = []
+            # epoch_res_body = []
+            # epoch_res_neu = []
+            # if self.val_seq is not None:
+                # for step, (batch_x, batch_y) in enumerate(self.val_seq):
+                    # val_loss = self.model.test_on_batch(batch_x, batch_y)
+                    # epoch_val_loss.append(val_loss)
 
-                    #-------------------------- DEBUG Loss--------------------------
-                    y_pred = self.model.predict_on_batch(batch_x) 
-                    y_true = batch_y
+                    # #-------------------------- DEBUG Loss--------------------------
+                    # y_pred = self.model.predict_on_batch(batch_x) 
+                    # y_true = batch_y
 
-                    if self.UseTwoNeumannChannel :
-                        inputs = y_pred[:,:,:,self.dof:4*self.dof] # New Neumann Channel
-                    else:
-                        inputs = y_pred[:,:,:,self.dof:3*self.dof] # Old Neumann Channel
-                    y_pred = y_pred[:,:,:,0:self.dof]
-                    R_red, y_pred, y_true_dummy, R_body, dR_neumann, _ = self._compute_residual(inputs, y_pred)
+                    # if self.UseTwoNeumannChannel :
+                        # inputs = y_pred[:,:,:,self.dof:4*self.dof] # New Neumann Channel
+                    # else:
+                        # inputs = y_pred[:,:,:,self.dof:3*self.dof] # Old Neumann Channel
+                    # y_pred = y_pred[:,:,:,0:self.dof]
+                    # R_red, y_pred, y_true_dummy, R_body, dR_neumann, _ = self._compute_residual(inputs, y_pred)
 
-                    mse_loss = 0.0
-                    res_body = 0.0
-                    res_neu = 0.0
+                    # mse_loss = 0.0
+                    # res_body = 0.0
+                    # res_neu = 0.0
 
-                    mse_loss = self.BetaMSELoss * (tf.reduce_mean(tf.square(tf.where(y_true_dummy > -0.9, 0.5 * tf.ones_like(y_true_dummy, dtype=tf.float32), tf.zeros_like(y_true_dummy, dtype=tf.float32)) - tf.where(y_true_dummy > -0.9, y_pred, tf.zeros_like(y_pred, dtype=tf.float32)))) )
-                    res_body = self.BetaPDELoss * tf.reduce_mean(tf.reduce_sum(tf.square(R_body), axis=[1,2,3]))
-                    res_neu = self.BetaPDELoss * tf.reduce_mean(tf.reduce_sum(tf.square(dR_neumann), axis=[1,2,3]))
+                    # mse_loss = self.BetaMSELoss * (tf.reduce_mean(tf.square(tf.where(y_true_dummy > -0.9, 0.5 * tf.ones_like(y_true_dummy, dtype=tf.float32), tf.zeros_like(y_true_dummy, dtype=tf.float32)) - tf.where(y_true_dummy > -0.9, y_pred, tf.zeros_like(y_pred, dtype=tf.float32)))) )
+                    # res_body = self.BetaPDELoss * tf.reduce_mean(tf.reduce_sum(tf.square(R_body), axis=[1,2,3]))
+                    # res_neu = self.BetaPDELoss * tf.reduce_mean(tf.reduce_sum(tf.square(dR_neumann), axis=[1,2,3]))
 
-                    epoch_mse_loss.append(mse_loss)
-                    epoch_res_body.append(res_body)
-                    epoch_res_neu.append(res_neu)
-                    #------------------------------------------------- end of loss debug-----------------
+                    # epoch_mse_loss.append(mse_loss)
+                    # epoch_res_body.append(res_body)
+                    # epoch_res_neu.append(res_neu)
+                    # #------------------------------------------------- end of loss debug-----------------
 
-            time_elapsed = time.time() - start_time
-            time_elapsed_list.append(time_elapsed)
-            print("time_elapsed = %s " % time_elapsed)
+            # time_elapsed = time.time() - start_time
+            # time_elapsed_list.append(time_elapsed)
+            # print("time_elapsed = %s " % time_elapsed)
 
-            self.losses['loss'].append(tf.reduce_mean(epoch_loss))
-            self.losses['val_loss'].append(tf.reduce_mean(epoch_val_loss))
+            # self.losses['loss'].append(tf.reduce_mean(epoch_loss))
+            # self.losses['val_loss'].append(tf.reduce_mean(epoch_val_loss))
 
-            #----------------------- DEBUG -----------------------
-            epoch_mse_loss = tf.reduce_mean(epoch_mse_loss)
-            epoch_res_body = tf.reduce_mean(epoch_res_body)
-            epoch_res_neu = tf.reduce_mean(epoch_res_neu)
-            self.losses['mse_loss'].append(epoch_mse_loss.numpy())
-            self.losses['res_body'].append(epoch_res_body.numpy())
-            self.losses['res_neu'].append(epoch_res_neu.numpy())
-            #----------------------- DEBUG -----------------------
+            # #----------------------- DEBUG -----------------------
+            # epoch_mse_loss = tf.reduce_mean(epoch_mse_loss)
+            # epoch_res_body = tf.reduce_mean(epoch_res_body)
+            # epoch_res_neu = tf.reduce_mean(epoch_res_neu)
+            # self.losses['mse_loss'].append(epoch_mse_loss.numpy())
+            # self.losses['res_body'].append(epoch_res_body.numpy())
+            # self.losses['res_neu'].append(epoch_res_neu.numpy())
+            # #----------------------- DEBUG -----------------------
 
             # # if epoch % 50 == 0:
             # if epoch % 1 == 0:
@@ -729,24 +730,24 @@ class PDEWorkflowSteadyState:
                 # print('save to: ', self.filename + '.pickle')
         # print("BatchSize: {}, Averaged time per epoch: {:.8f} s".format(self.batch_size, np.mean(np.array(time_elapsed_list[1:]))))
 
-        # save the last epoch
-        if self.epochs > 0:
-            self.model.save_weights(checkpoint_path + str(epoch).zfill(4), save_format='tf')
+        # # save the last epoch
+        # if self.epochs > 0:
+            # self.model.save_weights(checkpoint_path + str(epoch).zfill(4), save_format='tf')
 
-            plt.semilogy(self.losses['loss'], 'b')
-            plt.semilogy(self.losses['val_loss'], 'r')
-            plt.legend(['loss', 'val_loss'])
-            plt.xlabel('epoch')
-            plt.savefig(self.filename+'-loss.png')
-            print('save to:', self.filename+'-loss.png')
+            # plt.semilogy(self.losses['loss'], 'b')
+            # plt.semilogy(self.losses['val_loss'], 'r')
+            # plt.legend(['loss', 'val_loss'])
+            # plt.xlabel('epoch')
+            # plt.savefig(self.filename+'-loss.png')
+            # print('save to:', self.filename+'-loss.png')
 
-            if self.isBNN:
-                plt.clf()
-                plt.semilogy(self.var_sigma2, 'b')
-                plt.legend(['var(sigma2)'])
-                plt.xlabel('epoch')
-                plt.savefig(self.filename+'-sigma2.png')
-                print('save to:', self.filename+'-sigma2.png')
+            # if self.isBNN:
+                # plt.clf()
+                # plt.semilogy(self.var_sigma2, 'b')
+                # plt.legend(['var(sigma2)'])
+                # plt.xlabel('epoch')
+                # plt.savefig(self.filename+'-sigma2.png')
+                # print('save to:', self.filename+'-sigma2.png')
 
     def test(self, test_folder='', plot_png=True, output_reaction_force=False):
         """
@@ -928,7 +929,7 @@ class PDEWorkflowSteadyState:
         self._load_data()
         self._build_model()
         self._train()
-        self.test()
+        # self.test()
             
 if (__name__ == '__main__'):
     model = PDEWorkflowSteadyState()
