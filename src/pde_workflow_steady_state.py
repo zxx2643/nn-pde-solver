@@ -629,13 +629,6 @@ class PDEWorkflowSteadyState:
         time_elapsed_list = []
         for epoch in range(self.epochs):
             start_time = time.time()
-            # The first half of training only train data with Neumann BCs.
-            # The second half train all the data.
-            if self.NeumannFirst:
-                if epoch == 0:
-                    self._load_data(only_neumann_data=True)
-                elif epoch == int(self.epochs * 0.5):
-                    self._load_data(only_neumann_data=False)
 
             # Coefficients to enable the epoch initialization.
             if epoch < self.InitialEpoch:
@@ -649,21 +642,9 @@ class PDEWorkflowSteadyState:
             # print('epoch:', epoch)
             epoch_loss = []
             for step, (batch_x, batch_y) in enumerate(self.train_seq):
-                if customized_trainer:
-                    with tf.GradientTape() as t:
-                        current_loss = my_loss(batch_y, self.model(batch_x))
-                    # grads = t.gradient(current_loss, tvars)
-                    # self.optimizer.apply_gradients(zip(grads,tvars))
-                    grads = t.gradient(current_loss, none_loc_vars)
-                    self.optimizer.apply_gradients(zip(grads,none_loc_vars))
-                    # print(current_loss)
-                    # print("...training...", current_loss)
-                    # exit(0)
-                    epoch_loss.append(current_loss)
-                else:
-                    batch_loss = self.model.train_on_batch(batch_x, batch_y)
-                    epoch_loss.append(batch_loss)
-                    # print("...training...", batch_loss)
+                batch_loss = self.model.train_on_batch(batch_x, batch_y)
+                epoch_loss.append(batch_loss)
+                # print("...training...", batch_loss)
 
 
             epoch_val_loss = []
@@ -715,38 +696,38 @@ class PDEWorkflowSteadyState:
             self.losses['res_neu'].append(epoch_res_neu.numpy())
             #----------------------- DEBUG -----------------------
 
-            # if epoch % 50 == 0:
-            if epoch % 1 == 0:
-                # print('Epoch: {}, loss: {:.4e}, val_loss: {:.4e}'.format(epoch, self.losses['loss'][epoch], self.losses['val_loss'][epoch]))
-                print('Epoch: {}, loss: {:.4e}, val_loss: {:.4e}'.format(epoch, self.losses['loss'][epoch], self.losses['val_loss'][epoch]),
-                        'mse: {:.4e}'.format(epoch_mse_loss.numpy()), 
-                        'res_body: {:.4e}'.format(epoch_res_body.numpy()), 
-                        'res_neu: {:.4e}'.format(epoch_res_neu.numpy()), 
-                        'var(Sigma2): {:.4e}'.format(tf.math.pow(self.model.Sigma2.numpy(),2)),
-                        'std(Sigma2): {:.4e}'.format(self.model.Sigma2.numpy()),
-                        )
-            self.var_sigma2.append(tf.math.pow(self.model.Sigma2.numpy(),2))
-            # exit(0)
+            # # if epoch % 50 == 0:
+            # if epoch % 1 == 0:
+                # # print('Epoch: {}, loss: {:.4e}, val_loss: {:.4e}'.format(epoch, self.losses['loss'][epoch], self.losses['val_loss'][epoch]))
+                # print('Epoch: {}, loss: {:.4e}, val_loss: {:.4e}'.format(epoch, self.losses['loss'][epoch], self.losses['val_loss'][epoch]),
+                        # 'mse: {:.4e}'.format(epoch_mse_loss.numpy()), 
+                        # 'res_body: {:.4e}'.format(epoch_res_body.numpy()), 
+                        # 'res_neu: {:.4e}'.format(epoch_res_neu.numpy()), 
+                        # 'var(Sigma2): {:.4e}'.format(tf.math.pow(self.model.Sigma2.numpy(),2)),
+                        # 'std(Sigma2): {:.4e}'.format(self.model.Sigma2.numpy()),
+                        # )
+            # self.var_sigma2.append(tf.math.pow(self.model.Sigma2.numpy(),2))
+            # # exit(0)
 
-            # save check points every 10 epoches
-            if epoch % 100 == 0:
-                self.model.save_weights(checkpoint_path + str(epoch).zfill(4), save_format='tf')
+            # # save check points every 10 epoches
+            # if epoch % 100 == 0:
+                # self.model.save_weights(checkpoint_path + str(epoch).zfill(4), save_format='tf')
 
 
-            # save as pickle every 100 epoches
-            if epoch % 100 == 0 or epoch == 1:
-                self.simulation_results = {
-                        'configdata':self.config,
-                        'restartedfrom': self.restart_dir_to_load,
-                        'savedckpdir':self.restart_dir,
-                        'losses':self.losses,
-                        'var_sigma2': self.var_sigma2,
-                        }
-                pickle_out = open(self.filename + '.pickle', "wb")
-                pickle.dump(self.simulation_results, pickle_out)
-                pickle_out.close()
-                print('save to: ', self.filename + '.pickle')
-        print("BatchSize: {}, Averaged time per epoch: {:.8f} s".format(self.batch_size, np.mean(np.array(time_elapsed_list[1:]))))
+            # # save as pickle every 100 epoches
+            # if epoch % 100 == 0 or epoch == 1:
+                # self.simulation_results = {
+                        # 'configdata':self.config,
+                        # 'restartedfrom': self.restart_dir_to_load,
+                        # 'savedckpdir':self.restart_dir,
+                        # 'losses':self.losses,
+                        # 'var_sigma2': self.var_sigma2,
+                        # }
+                # pickle_out = open(self.filename + '.pickle', "wb")
+                # pickle.dump(self.simulation_results, pickle_out)
+                # pickle_out.close()
+                # print('save to: ', self.filename + '.pickle')
+        # print("BatchSize: {}, Averaged time per epoch: {:.8f} s".format(self.batch_size, np.mean(np.array(time_elapsed_list[1:]))))
 
         # save the last epoch
         if self.epochs > 0:
