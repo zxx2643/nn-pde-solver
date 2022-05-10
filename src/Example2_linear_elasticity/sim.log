@@ -1,0 +1,395 @@
+file:  0 data/DNS/np-features-35.npy
+file: data/DNS/np-features-35.npy label: (1, 16, 16, 2) feature: (1, 16, 16, 4)
+len of self.features:  (1, 16, 16, 4)
+float32
+len of features:  (2048, 16, 16, 4) len of training data:  (1536, 16, 16, 4) len of test data:  (205, 16, 16, 4) batch size:  512 total train batches:  3 total val batches:  1 total test batches:  1
+Model: "bnn_user_weak_pde_general"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input (LayerFillRandomNumber multiple                  0         
+_________________________________________________________________
+conv2d (Conv2D)              multiple                  808       
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) multiple                  0         
+_________________________________________________________________
+conv2d_1 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 multiple                  0         
+_________________________________________________________________
+conv2d_2 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+max_pooling2d_2 (MaxPooling2 multiple                  0         
+_________________________________________________________________
+flatten (Flatten)            multiple                  0         
+_________________________________________________________________
+dense (Dense)                multiple                  1056      
+_________________________________________________________________
+dense_1 (Dense)              multiple                  2112      
+_________________________________________________________________
+reshape (Reshape)            multiple                  0         
+_________________________________________________________________
+conv2d_3 (Conv2D)            multiple                  808       
+_________________________________________________________________
+up_sampling2d (UpSampling2D) multiple                  0         
+_________________________________________________________________
+conv2d_4 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+up_sampling2d_1 (UpSampling2 multiple                  0         
+_________________________________________________________________
+conv2d_5 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+conv2d_6 (Conv2D)            multiple                  402       
+=================================================================
+Total params: 11,619
+Trainable params: 11,618
+Non-trainable params: 1
+_________________________________________________________________
+self.args.restartfrom: 
+use customized_trainer: False
+time_elapsed = 7.003100872039795 
+Epoch: 0, loss: 2.2146e-01, val_loss: 2.2019e-01 mse: 2.1778e-01 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+save to:  results/2022-05-10T12-55-Destiny-NN-tmp-x11-B512-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125543.pickle
+time_elapsed = 0.37237548828125 
+Epoch: 1, loss: 2.1979e-01, val_loss: 2.1885e-01 mse: 2.1630e-01 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+save to:  results/2022-05-10T12-55-Destiny-NN-tmp-x11-B512-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125543.pickle
+time_elapsed = 0.3835880756378174 
+Epoch: 2, loss: 2.1811e-01, val_loss: 2.1687e-01 mse: 2.1430e-01 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.3526763916015625 
+Epoch: 3, loss: 2.1578e-01, val_loss: 2.1312e-01 mse: 2.1076e-01 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.36308932304382324 
+Epoch: 4, loss: 2.1127e-01, val_loss: 2.0687e-01 mse: 2.0420e-01 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.34516143798828125 
+Epoch: 5, loss: 3.9168e+04, val_loss: 3.7951e+04 mse: 0.0000e+00 res_body: 3.7952e+04 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.37713122367858887 
+Epoch: 6, loss: 3.7474e+04, val_loss: 3.6451e+04 mse: 0.0000e+00 res_body: 3.6445e+04 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.38729333877563477 
+Epoch: 7, loss: 3.5788e+04, val_loss: 3.4202e+04 mse: 0.0000e+00 res_body: 3.4178e+04 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.3596644401550293 
+Epoch: 8, loss: 3.3027e+04, val_loss: 3.0252e+04 mse: 0.0000e+00 res_body: 3.0272e+04 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.3659374713897705 
+Epoch: 9, loss: 2.8431e+04, val_loss: 2.4406e+04 mse: 0.0000e+00 res_body: 2.4415e+04 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+BatchSize: 512, Averaged time per epoch: 0.36743524 s
+save to: results/2022-05-10T12-55-Destiny-NN-tmp-x11-B512-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125543-loss.png
+ ... Running monte carlo inference
+1
+1/1 [==============================] - 0s 115ms/step
+Pred. Mean. is using label_min and label_max as colorbar range. Thus, the plot might not look so right.
+Pred. Mean. is using label_min and label_max as colorbar range. Thus, the plot might not look so right.
+save to:  results/2022-05-10T12-55-Destiny-NN-tmp-x11-B512-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125543.png
+file:  0 data/DNS/np-features-35.npy
+file: data/DNS/np-features-35.npy label: (1, 16, 16, 2) feature: (1, 16, 16, 4)
+len of self.features:  (1, 16, 16, 4)
+float32
+len of features:  (2048, 16, 16, 4) len of training data:  (1536, 16, 16, 4) len of test data:  (205, 16, 16, 4) batch size:  256 total train batches:  6 total val batches:  2 total test batches:  1
+Model: "bnn_user_weak_pde_general"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input (LayerFillRandomNumber multiple                  0         
+_________________________________________________________________
+conv2d (Conv2D)              multiple                  808       
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) multiple                  0         
+_________________________________________________________________
+conv2d_1 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 multiple                  0         
+_________________________________________________________________
+conv2d_2 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+max_pooling2d_2 (MaxPooling2 multiple                  0         
+_________________________________________________________________
+flatten (Flatten)            multiple                  0         
+_________________________________________________________________
+dense (Dense)                multiple                  1056      
+_________________________________________________________________
+dense_1 (Dense)              multiple                  2112      
+_________________________________________________________________
+reshape (Reshape)            multiple                  0         
+_________________________________________________________________
+conv2d_3 (Conv2D)            multiple                  808       
+_________________________________________________________________
+up_sampling2d (UpSampling2D) multiple                  0         
+_________________________________________________________________
+conv2d_4 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+up_sampling2d_1 (UpSampling2 multiple                  0         
+_________________________________________________________________
+conv2d_5 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+conv2d_6 (Conv2D)            multiple                  402       
+=================================================================
+Total params: 11,619
+Trainable params: 11,618
+Non-trainable params: 1
+_________________________________________________________________
+self.args.restartfrom: 
+use customized_trainer: False
+time_elapsed = 6.635945796966553 
+Epoch: 0, loss: 2.1884e-01, val_loss: 2.1542e-01 mse: 2.1268e-01 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+save to:  results/2022-05-10T12-55-Destiny-NN-tmp-x11-B256-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125558.pickle
+time_elapsed = 0.44434213638305664 
+Epoch: 1, loss: 2.0993e-01, val_loss: 1.9895e-01 mse: 1.9649e-01 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+save to:  results/2022-05-10T12-55-Destiny-NN-tmp-x11-B256-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125558.pickle
+time_elapsed = 0.42911410331726074 
+Epoch: 2, loss: 1.8169e-01, val_loss: 1.4614e-01 mse: 1.4350e-01 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.43621253967285156 
+Epoch: 3, loss: 1.0409e-01, val_loss: 5.1694e-02 mse: 4.9130e-02 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.44521546363830566 
+Epoch: 4, loss: 4.3655e-02, val_loss: 3.6839e-02 mse: 3.4317e-02 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.44846606254577637 
+Epoch: 5, loss: 1.3823e+04, val_loss: 8.6402e+03 mse: 0.0000e+00 res_body: 8.6483e+03 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.4507710933685303 
+Epoch: 6, loss: 7.2139e+03, val_loss: 5.6743e+03 mse: 0.0000e+00 res_body: 5.6768e+03 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.43650245666503906 
+Epoch: 7, loss: 4.9866e+03, val_loss: 4.2210e+03 mse: 0.0000e+00 res_body: 4.2222e+03 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.44242286682128906 
+Epoch: 8, loss: 3.8615e+03, val_loss: 3.4411e+03 mse: 0.0000e+00 res_body: 3.4343e+03 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.38824915885925293 
+Epoch: 9, loss: 3.2090e+03, val_loss: 2.9278e+03 mse: 0.0000e+00 res_body: 2.9326e+03 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+BatchSize: 256, Averaged time per epoch: 0.43569954 s
+save to: results/2022-05-10T12-55-Destiny-NN-tmp-x11-B256-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125558-loss.png
+ ... Running monte carlo inference
+1
+1/1 [==============================] - 0s 113ms/step
+Pred. Mean. is using label_min and label_max as colorbar range. Thus, the plot might not look so right.
+Pred. Mean. is using label_min and label_max as colorbar range. Thus, the plot might not look so right.
+save to:  results/2022-05-10T12-55-Destiny-NN-tmp-x11-B256-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125558.png
+file:  0 data/DNS/np-features-35.npy
+file: data/DNS/np-features-35.npy label: (1, 16, 16, 2) feature: (1, 16, 16, 4)
+len of self.features:  (1, 16, 16, 4)
+float32
+len of features:  (2048, 16, 16, 4) len of training data:  (1536, 16, 16, 4) len of test data:  (205, 16, 16, 4) batch size:  128 total train batches:  12 total val batches:  3 total test batches:  2
+Model: "bnn_user_weak_pde_general"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input (LayerFillRandomNumber multiple                  0         
+_________________________________________________________________
+conv2d (Conv2D)              multiple                  808       
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) multiple                  0         
+_________________________________________________________________
+conv2d_1 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 multiple                  0         
+_________________________________________________________________
+conv2d_2 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+max_pooling2d_2 (MaxPooling2 multiple                  0         
+_________________________________________________________________
+flatten (Flatten)            multiple                  0         
+_________________________________________________________________
+dense (Dense)                multiple                  1056      
+_________________________________________________________________
+dense_1 (Dense)              multiple                  2112      
+_________________________________________________________________
+reshape (Reshape)            multiple                  0         
+_________________________________________________________________
+conv2d_3 (Conv2D)            multiple                  808       
+_________________________________________________________________
+up_sampling2d (UpSampling2D) multiple                  0         
+_________________________________________________________________
+conv2d_4 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+up_sampling2d_1 (UpSampling2 multiple                  0         
+_________________________________________________________________
+conv2d_5 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+conv2d_6 (Conv2D)            multiple                  402       
+=================================================================
+Total params: 11,619
+Trainable params: 11,618
+Non-trainable params: 1
+_________________________________________________________________
+self.args.restartfrom: 
+use customized_trainer: False
+time_elapsed = 7.01702880859375 
+Epoch: 0, loss: 1.7626e-01, val_loss: 1.1093e-01 mse: 1.0848e-01 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+save to:  results/2022-05-10T12-56-Destiny-NN-tmp-x11-B128-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125614.pickle
+time_elapsed = 0.5277180671691895 
+Epoch: 1, loss: 5.9344e-02, val_loss: 3.7057e-02 mse: 3.4596e-02 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+save to:  results/2022-05-10T12-56-Destiny-NN-tmp-x11-B128-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125614.pickle
+time_elapsed = 0.5178194046020508 
+Epoch: 2, loss: 3.1340e-02, val_loss: 2.6075e-02 mse: 2.3510e-02 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.5181112289428711 
+Epoch: 3, loss: 2.2934e-02, val_loss: 1.9558e-02 mse: 1.7086e-02 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.49829626083374023 
+Epoch: 4, loss: 1.7369e-02, val_loss: 1.4977e-02 mse: 1.2545e-02 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.4827158451080322 
+Epoch: 5, loss: 1.1370e+04, val_loss: 5.1866e+03 mse: 0.0000e+00 res_body: 5.1807e+03 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.5018224716186523 
+Epoch: 6, loss: 4.1749e+03, val_loss: 3.3808e+03 mse: 0.0000e+00 res_body: 3.3860e+03 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.5588951110839844 
+Epoch: 7, loss: 2.9704e+03, val_loss: 2.5581e+03 mse: 0.0000e+00 res_body: 2.5582e+03 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.6230700016021729 
+Epoch: 8, loss: 2.3154e+03, val_loss: 2.0720e+03 mse: 0.0000e+00 res_body: 2.0655e+03 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.7145302295684814 
+Epoch: 9, loss: 1.8798e+03, val_loss: 1.6741e+03 mse: 0.0000e+00 res_body: 1.6730e+03 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+BatchSize: 128, Averaged time per epoch: 0.54921985 s
+save to: results/2022-05-10T12-56-Destiny-NN-tmp-x11-B128-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125614-loss.png
+ ... Running monte carlo inference
+2
+1/2 [==============>...............] - ETA: 0s2/2 [==============================] - 0s 51ms/step
+Pred. Mean. is using label_min and label_max as colorbar range. Thus, the plot might not look so right.
+Pred. Mean. is using label_min and label_max as colorbar range. Thus, the plot might not look so right.
+save to:  results/2022-05-10T12-56-Destiny-NN-tmp-x11-B128-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125614.png
+file:  0 data/DNS/np-features-35.npy
+file: data/DNS/np-features-35.npy label: (1, 16, 16, 2) feature: (1, 16, 16, 4)
+len of self.features:  (1, 16, 16, 4)
+float32
+len of features:  (2048, 16, 16, 4) len of training data:  (1600, 16, 16, 4) len of test data:  (205, 16, 16, 4) batch size:  64 total train batches:  25 total val batches:  4 total test batches:  4
+Model: "bnn_user_weak_pde_general"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input (LayerFillRandomNumber multiple                  0         
+_________________________________________________________________
+conv2d (Conv2D)              multiple                  808       
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) multiple                  0         
+_________________________________________________________________
+conv2d_1 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 multiple                  0         
+_________________________________________________________________
+conv2d_2 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+max_pooling2d_2 (MaxPooling2 multiple                  0         
+_________________________________________________________________
+flatten (Flatten)            multiple                  0         
+_________________________________________________________________
+dense (Dense)                multiple                  1056      
+_________________________________________________________________
+dense_1 (Dense)              multiple                  2112      
+_________________________________________________________________
+reshape (Reshape)            multiple                  0         
+_________________________________________________________________
+conv2d_3 (Conv2D)            multiple                  808       
+_________________________________________________________________
+up_sampling2d (UpSampling2D) multiple                  0         
+_________________________________________________________________
+conv2d_4 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+up_sampling2d_1 (UpSampling2 multiple                  0         
+_________________________________________________________________
+conv2d_5 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+conv2d_6 (Conv2D)            multiple                  402       
+=================================================================
+Total params: 11,619
+Trainable params: 11,618
+Non-trainable params: 1
+_________________________________________________________________
+self.args.restartfrom: 
+use customized_trainer: False
+time_elapsed = 8.037153720855713 
+Epoch: 0, loss: 1.8125e-01, val_loss: 6.7198e-02 mse: 6.4688e-02 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+save to:  results/2022-05-10T12-56-Destiny-NN-tmp-x11-B64-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125632.pickle
+time_elapsed = 0.7573437690734863 
+Epoch: 1, loss: 3.6021e-02, val_loss: 2.1627e-02 mse: 1.9112e-02 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+save to:  results/2022-05-10T12-56-Destiny-NN-tmp-x11-B64-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125632.pickle
+time_elapsed = 0.7381563186645508 
+Epoch: 2, loss: 1.5421e-02, val_loss: 1.0415e-02 mse: 7.9229e-03 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.764681339263916 
+Epoch: 3, loss: 8.2736e-03, val_loss: 6.9425e-03 mse: 4.4415e-03 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.8242247104644775 
+Epoch: 4, loss: 5.9193e-03, val_loss: 5.2768e-03 mse: 2.7533e-03 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.7527382373809814 
+Epoch: 5, loss: 2.6280e+03, val_loss: 1.0147e+03 mse: 0.0000e+00 res_body: 1.0141e+03 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.8589015007019043 
+Epoch: 6, loss: 7.3755e+02, val_loss: 5.3333e+02 mse: 0.0000e+00 res_body: 5.3402e+02 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.7188560962677002 
+Epoch: 7, loss: 4.3541e+02, val_loss: 3.5764e+02 mse: 0.0000e+00 res_body: 3.5641e+02 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.9367227554321289 
+Epoch: 8, loss: 3.1575e+02, val_loss: 2.8984e+02 mse: 0.0000e+00 res_body: 2.8503e+02 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 0.8826913833618164 
+Epoch: 9, loss: 2.5944e+02, val_loss: 2.4465e+02 mse: 0.0000e+00 res_body: 2.4418e+02 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+BatchSize: 64, Averaged time per epoch: 0.80381290 s
+save to: results/2022-05-10T12-56-Destiny-NN-tmp-x11-B64-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125632-loss.png
+ ... Running monte carlo inference
+4
+1/4 [======>.......................] - ETA: 0s4/4 [==============================] - 0s 41ms/step
+Pred. Mean. is using label_min and label_max as colorbar range. Thus, the plot might not look so right.
+Pred. Mean. is using label_min and label_max as colorbar range. Thus, the plot might not look so right.
+save to:  results/2022-05-10T12-56-Destiny-NN-tmp-x11-B64-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125632.png
+file:  0 data/DNS/np-features-35.npy
+file: data/DNS/np-features-35.npy label: (1, 16, 16, 2) feature: (1, 16, 16, 4)
+len of self.features:  (1, 16, 16, 4)
+float32
+len of features:  (2048, 16, 16, 4) len of training data:  (1632, 16, 16, 4) len of test data:  (205, 16, 16, 4) batch size:  32 total train batches:  51 total val batches:  7 total test batches:  7
+Model: "bnn_user_weak_pde_general"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input (LayerFillRandomNumber multiple                  0         
+_________________________________________________________________
+conv2d (Conv2D)              multiple                  808       
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) multiple                  0         
+_________________________________________________________________
+conv2d_1 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 multiple                  0         
+_________________________________________________________________
+conv2d_2 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+max_pooling2d_2 (MaxPooling2 multiple                  0         
+_________________________________________________________________
+flatten (Flatten)            multiple                  0         
+_________________________________________________________________
+dense (Dense)                multiple                  1056      
+_________________________________________________________________
+dense_1 (Dense)              multiple                  2112      
+_________________________________________________________________
+reshape (Reshape)            multiple                  0         
+_________________________________________________________________
+conv2d_3 (Conv2D)            multiple                  808       
+_________________________________________________________________
+up_sampling2d (UpSampling2D) multiple                  0         
+_________________________________________________________________
+conv2d_4 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+up_sampling2d_1 (UpSampling2 multiple                  0         
+_________________________________________________________________
+conv2d_5 (Conv2D)            multiple                  1608      
+_________________________________________________________________
+conv2d_6 (Conv2D)            multiple                  402       
+=================================================================
+Total params: 11,619
+Trainable params: 11,618
+Non-trainable params: 1
+_________________________________________________________________
+self.args.restartfrom: 
+use customized_trainer: False
+time_elapsed = 7.722346067428589 
+Epoch: 0, loss: 9.4858e-02, val_loss: 1.8404e-02 mse: 1.5943e-02 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+save to:  results/2022-05-10T12-56-Destiny-NN-tmp-x11-B32-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125653.pickle
+time_elapsed = 1.2286901473999023 
+Epoch: 1, loss: 1.1809e-02, val_loss: 7.2463e-03 mse: 4.7158e-03 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+save to:  results/2022-05-10T12-56-Destiny-NN-tmp-x11-B32-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125653.pickle
+time_elapsed = 1.2277460098266602 
+Epoch: 2, loss: 5.6033e-03, val_loss: 4.4714e-03 mse: 1.9749e-03 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 1.1587984561920166 
+Epoch: 3, loss: 4.1958e-03, val_loss: 3.8324e-03 mse: 1.3195e-03 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 1.4328639507293701 
+Epoch: 4, loss: 3.8621e-03, val_loss: 3.5347e-03 mse: 1.0244e-03 res_body: 0.0000e+00 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 1.09938645362854 
+Epoch: 5, loss: 1.5231e+03, val_loss: 4.6749e+02 mse: 0.0000e+00 res_body: 4.6404e+02 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 1.322098970413208 
+Epoch: 6, loss: 3.4277e+02, val_loss: 2.4983e+02 mse: 0.0000e+00 res_body: 2.5057e+02 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 1.1207704544067383 
+Epoch: 7, loss: 2.1504e+02, val_loss: 1.8106e+02 mse: 0.0000e+00 res_body: 1.7956e+02 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 1.097398042678833 
+Epoch: 8, loss: 1.6057e+02, val_loss: 1.4229e+02 mse: 0.0000e+00 res_body: 1.3752e+02 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+time_elapsed = 1.2709460258483887 
+Epoch: 9, loss: 1.2805e+02, val_loss: 1.1713e+02 mse: 0.0000e+00 res_body: 1.1986e+02 res_neu: 0.0000e+00 var(Sigma2): 0.0000e+00 std(Sigma2): 0.0000e+00
+BatchSize: 32, Averaged time per epoch: 1.21763317 s
+save to: results/2022-05-10T12-56-Destiny-NN-tmp-x11-B32-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125653-loss.png
+ ... Running monte carlo inference
+7
+1/7 [===>..........................] - ETA: 0s7/7 [==============================] - 0s 14ms/step
+Pred. Mean. is using label_min and label_max as colorbar range. Thus, the plot might not look so right.
+Pred. Mean. is using label_min and label_max as colorbar range. Thus, the plot might not look so right.
+save to:  results/2022-05-10T12-56-Destiny-NN-tmp-x11-B32-E10-I5-mc1-1S0.0e+00-2S0.0e+00-Nadam-2.5e-04-data-20220510125653.png
