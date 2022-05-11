@@ -5,8 +5,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 #os.environ["CUDA_VISIBLE_DEVICES"]="0"
 #os.environ["CUDA_VISIBLE_DEVICES"]="3"
 
-
-
 # Helper libraries
 import numpy as np
 import matplotlib.pyplot as plt
@@ -34,6 +32,18 @@ import tensorflow_probability as tfp
 from nn_models import BNN_user_weak_pde_general
 import pde_layers as pde_layers
 from pde_utility import plot_PDE_solutions, plot_fields, split_data, expand_dataset, exe_cmd, BatchData, plot_one_field_hist, plot_one_field_stat, plot_one_field,plot_PDE_solutions_new
+
+import horovod.tensorflow.keras as hvd
+
+# Horovod: initialize Horovod.
+hvd.init()
+
+# Horovod: pin GPU to be used to process local rank (one GPU per process)
+gpus = tf.config.experimental.list_physical_devices('GPU')
+for gpu in gpus:
+    tf.config.experimental.set_memory_growth(gpu, True)
+if gpus:
+    tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
 
 
 class PDEWorkflowSteadyState:
@@ -215,7 +225,7 @@ class PDEWorkflowSteadyState:
             # data_folder = self.data_path + '/' + self.data_folder + '/'
 
         for one_folder in data_folder_list:
-            data_folder = self.data_path + '/' + one_folder + '/'
+            data_folder = self.data_path + '/' + one_folder + '/' + str(hvd.rank()) + '/' 
 
             file_list = glob.glob(data_folder + '/np-features*.npy')
             file_list = natsorted(file_list, alg=ns.IGNORECASE)
@@ -537,7 +547,11 @@ class PDEWorkflowSteadyState:
                 layers_str=self.config['NN']['NNArchitecture'],
                 NUM_TRAIN_EXAMPLES=self.total_train_batch, # total batch numbers
                 Sigma2=self.Sigma2)
-        self.optimizer = self._build_optimizer()
+
+        # self.optimizer = self._build_optimizer()
+        # Horovod: add Horovod DistributedOptimizer.
+        self.optimizer = hvd.DistributedOptimizer(
+        self._build_optimizer(), backward_passes_per_step=1, average_aggregated_gradients=True)
 
         self.model.compile(
             loss = self._build_loss(),
@@ -776,7 +790,7 @@ class PDEWorkflowSteadyState:
         self.model.fit(x=self.train_dataset,
                 y=self.train_label,
                 batch_size=self.batch_size,
-                epochs=5,
+                epochs=5,   # // hvd.size()
                 verbose='auto',
                 )
 
@@ -976,6 +990,8 @@ class PDEWorkflowSteadyState:
         - train
         - test
         """
+        
+
         self._load_data()
         self._build_model()
         # self._train()
