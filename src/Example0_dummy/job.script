@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH --job-name="gpu_test"
+#SBATCH --output="gpu_test_o.%j.%N.out"
+#SBATCH --error="gpu_test_e.%j.%N.out"
+#SBATCH --partition=gpu-shared
+#SBATCH --nodes=1
+#SBATCH --gpus=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --account=mia326
+#SBATCH --export=ALL
+#SBATCH -t 00:30:00
+horovodrun -np 2 python test.py
