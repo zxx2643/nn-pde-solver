@@ -33,17 +33,22 @@ from nn_models import BNN_user_weak_pde_general
 import pde_layers as pde_layers
 from pde_utility import plot_PDE_solutions, plot_fields, split_data, expand_dataset, exe_cmd, BatchData, plot_one_field_hist, plot_one_field_stat, plot_one_field,plot_PDE_solutions_new
 
-import horovod.tensorflow.keras as hvd
+with_horovod = True
+
+if with_horovod:
+    import horovod.tensorflow.keras as hvd
 
 # Horovod: initialize Horovod.
-hvd.init()
+if with_horovod:
+    hvd.init()
 
 # Horovod: pin GPU to be used to process local rank (one GPU per process)
-gpus = tf.config.experimental.list_physical_devices('GPU')
-for gpu in gpus:
-    tf.config.experimental.set_memory_growth(gpu, True)
-if gpus:
-    tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
+if with_horovod:
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+    if gpus:
+        tf.config.experimental.set_visible_devices(gpus[hvd.local_rank()], 'GPU')
 
 
 class PDEWorkflowSteadyState:
@@ -225,7 +230,11 @@ class PDEWorkflowSteadyState:
             # data_folder = self.data_path + '/' + self.data_folder + '/'
 
         for one_folder in data_folder_list:
-            data_folder = self.data_path + '/' + one_folder + '/' + str(hvd.rank()) + '/' 
+
+            if with_horovod:
+                data_folder = self.data_path + '/' + one_folder + '/' + str(hvd.rank()) + '/' 
+            else:
+                data_folder = self.data_path + '/' + one_folder + '/' 
 
             file_list = glob.glob(data_folder + '/np-features*.npy')
             file_list = natsorted(file_list, alg=ns.IGNORECASE)
@@ -550,8 +559,12 @@ class PDEWorkflowSteadyState:
 
         # self.optimizer = self._build_optimizer()
         # Horovod: add Horovod DistributedOptimizer.
-        self.optimizer = hvd.DistributedOptimizer(
-        self._build_optimizer(), backward_passes_per_step=1, average_aggregated_gradients=True)
+
+        if with_horovod:
+            self.optimizer = hvd.DistributedOptimizer(
+            self._build_optimizer(), backward_passes_per_step=1, average_aggregated_gradients=True)
+        else: 
+            self.optimizer = self._build_optimizer()
 
         self.model.compile(
             loss = self._build_loss(),
@@ -787,12 +800,18 @@ class PDEWorkflowSteadyState:
         self.model.build(input_shape) # `input_shape` is the shape of the input data
         self.model.summary()
 
-        self.model.fit(x=self.train_dataset,
+        self.model.fit(
+                x=self.train_dataset,
                 y=self.train_label,
                 batch_size=self.batch_size,
                 epochs=5,   # // hvd.size()
                 verbose='auto',
                 )
+        print(self.model.evaluate(
+                x=self.train_dataset,
+                y=self.train_label,
+                batch_size=self.batch_size,
+            ))
 
         # time_elapsed_list = []
         # for epoch in range(self.epochs):
