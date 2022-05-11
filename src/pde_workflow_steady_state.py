@@ -749,6 +749,56 @@ class PDEWorkflowSteadyState:
                 # plt.savefig(self.filename+'-sigma2.png')
                 # print('save to:', self.filename+'-sigma2.png')
 
+
+    def _train_with_fit(self):
+        """
+        Use batch-optimization to train the model.
+        """
+
+        if self.epochs > 0:
+            cmd = "mkdir -p " + self.restart_dir
+            exe_cmd(cmd)
+
+        self.model_train_loss = []
+        self.model_val_loss = []
+        model_loss = 1000
+
+        checkpoint_path = self.restart_dir + "/ckpt"    # it's difficult to include time info, as we need to restart simulation
+
+        self.losses = {'loss': [], 'val_loss': [], 'mse_loss':[], 'res_body':[], 'res_neu':[]}
+        self.var_sigma2 = []
+
+        # print model information
+        input_shape=(None, np.shape(self.features)[1], np.shape(self.features)[2], np.shape(self.features)[3])
+        self.model.build(input_shape) # `input_shape` is the shape of the input data
+        self.model.summary()
+
+        self.model.fit(x=self.train_dataset,
+                y=self.train_label,
+                batch_size=self.batch_size,
+                epochs=5,
+                verbose='auto',
+                )
+
+        # time_elapsed_list = []
+        # for epoch in range(self.epochs):
+            # # Coefficients to enable the epoch initialization.
+            # if epoch < self.InitialEpoch:
+                # self.BetaMSELoss.assign(float(1.0))
+                # self.BetaPDELoss.assign(float(0.0))
+            # else:
+                # self.BetaMSELoss.assign(float(0.0))
+                # self.BetaPDELoss.assign(float(1.0))
+
+            # # if (epoch+1)%50 == 0:
+            # # print('epoch:', epoch)
+            # epoch_loss = []
+            # # for step, (batch_x, batch_y) in enumerate(self.train_seq):
+            # for (batch_x, batch_y)  in self.train_seq.prefetch(self.batch_size*2):
+                # batch_loss = self.model.train_on_batch(batch_x, batch_y)
+                # epoch_loss.append(batch_loss)
+
+
     def test(self, test_folder='', plot_png=True, output_reaction_force=False):
         """
         Make prediction with the surrogate model
@@ -928,7 +978,8 @@ class PDEWorkflowSteadyState:
         """
         self._load_data()
         self._build_model()
-        self._train()
+        # self._train()
+        self._train_with_fit()
         # self.test()
             
 if (__name__ == '__main__'):
