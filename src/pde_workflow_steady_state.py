@@ -575,6 +575,8 @@ class PDEWorkflowSteadyState:
             optimizer = self.optimizer,
             experimental_run_tf_function = False,    # allow the kl-call in the layer structure
         )
+        hvd_init_bcast = [hvd.callbacks.BroadcastGlobalVariablesCallback(0),]
+
 
     # all the data need to be converted to dataset, requires significant change of the code structure. 
     # @tf.function
