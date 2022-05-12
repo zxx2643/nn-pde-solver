@@ -820,6 +820,7 @@ class PDEWorkflowSteadyState:
                 x=self.train_dataset,
                 y=self.train_label,
                 batch_size=self.batch_size)
+
         print('train_loss (before PDE): ', train_loss)
         self.BetaMSELoss.assign(float(0.0))
         self.BetaPDELoss.assign(float(1.0))
@@ -828,7 +829,20 @@ class PDEWorkflowSteadyState:
                 x=self.train_dataset,
                 y=self.train_label,
                 batch_size=self.batch_size,
-                epochs=self.epochs-self.InitialEpoch,   # // hvd.size()
+                epochs=1,   # // hvd.size()
+                verbose='auto',
+                )
+        train_loss = self.model.evaluate(
+                x=self.train_dataset,
+                y=self.train_label,
+                batch_size=self.batch_size)
+        print('train_loss (PDE start): ', train_loss)
+
+        self.model.fit(
+                x=self.train_dataset,
+                y=self.train_label,
+                batch_size=self.batch_size,
+                epochs=self.epochs-self.InitialEpoch-1,   # // hvd.size()
                 verbose='auto',
                 )
 
