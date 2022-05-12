@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name="gpu_test"
-#SBATCH --output="gpu_test_o.%j.%N.out"
-#SBATCH --error="gpu_test_e.%j.%N.out"
+#SBATCH --job-name="pde"
+#SBATCH --output="o_pde%j.%N.out"
+#SBATCH --error="e_pde.%j.%N.out"
 #SBATCH --partition=gpu-shared
 #SBATCH --nodes=1
 #SBATCH --gpus=2
@@ -11,5 +11,4 @@
 #SBATCH -t 00:30:00
 module load gpu
 module load cuda
-module load openmpi
-horovodrun -np 2 python test.py
+time horovodrun -np 2 python main.py cnn-gpu2.ini

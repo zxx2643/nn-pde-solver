@@ -35,8 +35,10 @@ from pde_utility import plot_PDE_solutions, plot_fields, split_data, expand_data
 
 with_horovod = True
 
-if with_horovod:
+try:
     import horovod.tensorflow.keras as hvd
+except:
+    with_horovod = False
 
 # Horovod: initialize Horovod.
 if with_horovod:
@@ -417,6 +419,8 @@ class PDEWorkflowSteadyState:
             # decay_steps=100,
             # decay_rate=0.8,
             # staircase=True)
+        if with_horovod:
+            self.LR0 = self.LR0 * hvd.size()
 
         if self.NNOptimizer.lower() == 'RMSprop'.lower() :
             optimizer = tf.keras.optimizers.RMSprop(learning_rate=self.LR0)
@@ -804,14 +808,14 @@ class PDEWorkflowSteadyState:
                 x=self.train_dataset,
                 y=self.train_label,
                 batch_size=self.batch_size,
-                epochs=5,   # // hvd.size()
+                epochs=self.epochs,   # // hvd.size()
                 verbose='auto',
                 )
-        print(self.model.evaluate(
+        train_loss = self.model.evaluate(
                 x=self.train_dataset,
                 y=self.train_label,
-                batch_size=self.batch_size,
-            ))
+                batch_size=self.batch_size)
+        print('train_loss: ', train_loss)
 
         # time_elapsed_list = []
         # for epoch in range(self.epochs):
