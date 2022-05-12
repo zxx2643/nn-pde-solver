@@ -5,10 +5,10 @@
 #SBATCH --partition=gpu
 #SBATCH --nodes=2
 #SBATCH --gpus=8
-#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks-per-node=8
 #SBATCH --account=mia326
 #SBATCH --export=ALL
 #SBATCH -t 00:10:00
 module load gpu
 module load cuda
-time horovodrun -np 8 python main.py cnn-gpu4.ini
+time horovodrun -np 8 -H server1:4, server2:4 python main.py cnn-gpu8.ini
