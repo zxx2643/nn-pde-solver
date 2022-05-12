@@ -11,6 +11,6 @@
 #SBATCH -t 00:30:00
 module load gpu
 module load cuda
-time horovodrun -np 1 python main.py cnn-gpu1.ini
+#time horovodrun -np 1 python main.py cnn-gpu1.ini
 time horovodrun -np 1 python main.py cnn-gpu2.ini
 time horovodrun -np 1 python main.py cnn-gpu4.ini
