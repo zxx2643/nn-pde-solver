@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --job-name="pde"
+#SBATCH --output="o_pde%j.%N.out"
+#SBATCH --error="e_pde.%j.%N.out"
+#SBATCH --partition=gpu-shared
+#SBATCH --nodes=1
+#SBATCH --gpus=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --account=mia326
+#SBATCH --export=ALL
+#SBATCH -t 00:30:00
+module load gpu
+module load cuda
+time horovodrun -np 1 python main.py cnn-gpu1.ini
+time horovodrun -np 1 python main.py cnn-gpu2.ini
+time horovodrun -np 1 python main.py cnn-gpu4.ini

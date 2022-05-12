@@ -804,18 +804,37 @@ class PDEWorkflowSteadyState:
         self.model.build(input_shape) # `input_shape` is the shape of the input data
         self.model.summary()
 
+        self.BetaMSELoss.assign(float(1.0))
+        self.BetaPDELoss.assign(float(0.0))
+
         self.model.fit(
                 x=self.train_dataset,
                 y=self.train_label,
                 batch_size=self.batch_size,
-                epochs=self.epochs,   # // hvd.size()
+                epochs=self.InitialEpoch,   # // hvd.size()
                 verbose='auto',
                 )
         train_loss = self.model.evaluate(
                 x=self.train_dataset,
                 y=self.train_label,
                 batch_size=self.batch_size)
-        print('train_loss: ', train_loss)
+        print('train_loss (before PDE): ', train_loss)
+        self.BetaMSELoss.assign(float(0.0))
+        self.BetaPDELoss.assign(float(1.0))
+
+        self.model.fit(
+                x=self.train_dataset,
+                y=self.train_label,
+                batch_size=self.batch_size,
+                epochs=self.epochs-self.InitialEpoch,   # // hvd.size()
+                verbose='auto',
+                )
+
+        train_loss = self.model.evaluate(
+                x=self.train_dataset,
+                y=self.train_label,
+                batch_size=self.batch_size)
+        print('train_loss (after PDE): ', train_loss)
 
         # time_elapsed_list = []
         # for epoch in range(self.epochs):
