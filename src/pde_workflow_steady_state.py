@@ -575,7 +575,6 @@ class PDEWorkflowSteadyState:
             optimizer = self.optimizer,
             experimental_run_tf_function = False,    # allow the kl-call in the layer structure
         )
-        hvd_init_bcast = [hvd.callbacks.BroadcastGlobalVariablesCallback(0),]
 
 
     # all the data need to be converted to dataset, requires significant change of the code structure. 
@@ -806,12 +805,15 @@ class PDEWorkflowSteadyState:
         self.model.build(input_shape) # `input_shape` is the shape of the input data
         self.model.summary()
 
+        self.call_backs = [hvd.callbacks.BroadcastGlobalVariablesCallback(0),]
+
         self.BetaMSELoss.assign(float(1.0))
         self.BetaPDELoss.assign(float(0.0))
 
         self.model.fit(
                 x=self.train_dataset,
                 y=self.train_label,
+                callbacks = self.call_backs,
                 batch_size=self.batch_size,
                 epochs=self.InitialEpoch,   # // hvd.size()
                 verbose='auto',
@@ -828,6 +830,7 @@ class PDEWorkflowSteadyState:
         self.model.fit(
                 x=self.train_dataset,
                 y=self.train_label,
+                callbacks = self.call_backs,
                 batch_size=self.batch_size,
                 epochs=1,   # // hvd.size()
                 verbose='auto',
@@ -841,6 +844,7 @@ class PDEWorkflowSteadyState:
         self.model.fit(
                 x=self.train_dataset,
                 y=self.train_label,
+                callbacks = self.call_backs,
                 batch_size=self.batch_size,
                 epochs=self.epochs-self.InitialEpoch-1,   # // hvd.size()
                 verbose='auto',
